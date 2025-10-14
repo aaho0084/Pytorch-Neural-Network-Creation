@@ -1,0 +1,90 @@
+---
+title: "NYPD_Coursera_01"
+author: "Aaron_H"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplR)
+library(tidyverse)
+library(ggplot2)
+
+```{r import, echo = TRUE}
+NYPD_S <- read.csv("C:/Users/aaron/Documents/NYPD_Shooting_Incident_Data__Historic_ (1).csv")
+```
+
+## Tidying
+
+For this coursera submission, I will be going through eact step guided by the course. First I will import the data. Here is the First 10 rows of the imported NYPD report. I tidied the data to the ones I need, which is only the first four columns.
+
+
+
+
+```{r NYPD, echo = TRUE}
+NYPD <- head(NYPD_S, 10)
+NYPD[,1:4]
+```
+
+## Visualization
+
+For this part, I will attempt to group the report based around each date of time of having occured. Then, I will count how many incidents occured on each date. Below is the code.
+
+```{r analysis, echo = TRUE}
+
+NEW_NYPD <- NYPD_S %>%
+  arrange(OCCUR_DATE) %>%
+  group_by(OCCUR_DATE) %>%
+  summarize(BORO = n()) %>%
+  mutate(number_of_incidents = BORO) %>%
+  select(OCCUR_DATE,number_of_incidents)
+
+NEW_NYPD
+  
+
+```
+
+For a clearer presenation, I used this new table to create a bar graph below.
+
+## Visulization 2
+
+Here I will attempt to find the ratio of Male to Female Suspects.
+
+```{r visu, echo = TRUE}
+
+Male = NYPD_S %>%
+  filter(PERP_SEX == 'M') %>%
+  nrow()
+
+Female = NYPD_S %>%
+  filter(PERP_SEX == 'F') %>%
+  nrow()
+
+Ratio = Male/Female
+
+Ratio
+
+```
+
+### Result and Bias
+This shows that around for 36 times, Male have committed violence. This is only around, because many informations are 'null', meaning I cannot say either least or most. Regardless, 36 times is hard to beat even if many cells are null.
+
+## Modeling
+
+Now using the new table(NEW_NYPD), I will create a bar graph indicating the trend of incidents through out the decade.
+
+```{r modeling, echo = TRUE}
+PLOT_NYPD <- ggplot(NEW_NYPD , aes(x = OCCUR_DATE , y = number_of_incidents)) + geom_col()
+
+PLOT_NYPD
+
+
+
+```
+
+## Summary
+
+I computed a new table, informing the number of incidents on each date. I created a Male to Female ratio on suspects in an attempt to compare who committed crimes more. Then I created a bargraph presenting the number of incidents through the decade in a clear manner. Except the Male to Female ratio calculation, the incidental date should have no bias alone because incidents were recorded only when it happened.
